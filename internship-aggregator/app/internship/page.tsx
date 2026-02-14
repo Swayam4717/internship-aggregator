@@ -1,31 +1,35 @@
-import type {JobPost} from "@/types/jobs";
+"use client";
+
+import { useMemo, useState } from "react";
+import type { JobPost } from "@/types/job";
+import { filterJobs } from "@/services/JobFilter";
+
 const MOCK_JOBS: JobPost[] = [
-    {
-        id: "1",
-        source: "GREENHOUSE",
-        company: "STRIPE",
-        title: "Software Engineer Intern",
-        location: "Singapore",
-        remoteType: "ONSITE",
-        postURL: "https://www.stripe.com/careers/software-engineer-intern",
-        ingestedAt: "2024-06-01T12:00:00Z",
-        postedAt: "2024-05-30T12:00:00Z",
-        hashKey: "stripe-software-engineer-intern-1"
-    
-    },
-    {
-        id: "2",
-        source: "LEVER",
-        company: "Notion",
-        title: "Product Engineer Intern",
-        location: "Remote",
-        remoteType: "REMOTE",
-        postURL: "https://www.notion.com/careers/product-engineer-intern",
-        ingestedAt: "2024-06-02T12:00:00Z",
-        postedAt: "2024-06-01T12:00:00Z",
-        hashKey: "notion-product-engineer-intern-2"
-    },
-    {
+  {
+    id: "1",
+    source: "GREENHOUSE",
+    company: "Stripe",
+    title: "Software Engineering Intern",
+    location: "Singapore",
+    remoteType: "ONSITE",
+    postUrl: "https://boards.greenhouse.io/stripe/jobs/1",
+    ingestedAt: "2026-02-14T09:00:00.000Z",
+    postedAt: "2026-02-10T00:00:00.000Z",
+    hashKey: "stripe-software-engineering-intern-singapore"
+  },
+  {
+    id: "2",
+    source: "LEVER",
+    company: "Notion",
+    title: "Product Engineering Intern",
+    location: "Remote",
+    remoteType: "REMOTE",
+    postUrl: "https://jobs.lever.co/notion/2",
+    ingestedAt: "2026-02-14T09:05:00.000Z",
+    postedAt: "2026-02-12T00:00:00.000Z",
+    hashKey: "notion-product-engineering-intern-remote"
+  },
+  {
     id: "3",
     source: "GREENHOUSE",
     company: "Databricks",
@@ -98,23 +102,78 @@ const MOCK_JOBS: JobPost[] = [
     hashKey: "grab-machine-learning-intern-singapore"
   }
 ];
-export default function InternshipPage() {
-    return(
-        <div>
-            <h1>Internship Opportunities</h1>
-            {MOCK_JOBS.map((job) => (
-                <div key = {job.id}>
-                    <h2>{job.title}</h2>
-                    <p>{job.company} - {job.location}</p>
-                    <p>Source: {job.source}</p>
-                    <a href = {job.postURL} target= "_blank">
-                        View Job Posting
-                    </a>
-                    <hr />
-                </div>
 
-            )
-        )}
+
+export default function InternshipPage() {
+
+  const [keyword, setKeyword] = useState("");
+  const [company, setCompany] = useState("ALL");
+
+  const companies = useMemo(() => {
+    const unique = Array.from(
+      new Set(MOCK_JOBS.map((j) => j.company))
+    ).sort((a, b) => a.localeCompare(b));
+
+    return ["ALL", ...unique];
+  }, []);
+
+  const filteredJobs = useMemo(() => {
+    return filterJobs(MOCK_JOBS, keyword, company);
+  }, [keyword, company]);
+
+  return (
+    <div>
+      {/* Filters FIRST */}
+      <div style={{ display: "flex", gap: 12, marginBottom: 16 }}>
+        <input
+          value={keyword}
+          onChange={(e) => setKeyword(e.target.value)}
+          placeholder="Search..."
+          style={{
+            padding: 10,
+            border: "1px solid #ccc",
+            borderRadius: 8,
+            color: "black",
+            backgroundColor: "white"
+
+          }}
+        />
+
+        <select
+          value={company}
+          onChange={(e) => setCompany(e.target.value)}
+          style={{
+            padding: 10,
+            border: "1px solid #ccc",
+            borderRadius: 8,
+            color: "black",
+            backgroundColor: "white"
+            }}
+        >
+          {companies.map((c) => (
+            <option key={c} value={c}>
+              {c}
+            </option>
+          ))}
+        </select>
+
+        <div>
+          Showing {filteredJobs.length} of {MOCK_JOBS.length}
         </div>
-    );
+      </div>
+
+      {/* Results */}
+      {filteredJobs.map((job) => (
+        <div key={job.id}>
+          <h2>{job.title}</h2>
+          <p>{job.company} - {job.location}</p>
+          <p>Source: {job.source}</p>
+          <a href={job.postUrl} target="_blank" rel="noreferrer">
+            View Job Posting
+          </a>
+          <hr />
+        </div>
+      ))}
+    </div>
+  );
 }
