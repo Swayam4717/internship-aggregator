@@ -1,7 +1,12 @@
 import type { JobPost } from "@/types/job";
+type jobFilters = {
+        keyword?: string
+        company?:string
 
-export function filterJobs(jobs: JobPost[], keyword: string, company: string): JobPost[] {
-    const kw = keyword.trim().toLowerCase();
+    }
+export function filterJobs(jobs: JobPost[], filters: jobFilters): JobPost[] {
+    const keyword = (filters.keyword ?? "").trim().toLowerCase();
+    const company = filters.company ?? "ALL";
 
   return jobs.filter((job) => {
     const matchesCompany =
@@ -16,7 +21,7 @@ export function filterJobs(jobs: JobPost[], keyword: string, company: string): J
     `.toLowerCase();
 
     const matchesKeyword =
-      kw === "" || haystack.includes(kw);
+      keyword === "" || haystack.includes(keyword);
 
     return matchesCompany && matchesKeyword;
   });
