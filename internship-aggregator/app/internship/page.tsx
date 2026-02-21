@@ -11,6 +11,7 @@ export default function InternshipPage() {
   const [keyword, setKeyword] = useState("");
   const [company, setCompany] = useState("ALL");
   const [jobs, setJobs] = useState<JobPost[]>([]);
+  const [sort, setSort] = useState<"RECENT" | "COMPANY" | "TITLE">("RECENT");
 
   useEffect(() => {
     let cancelled = false;
@@ -35,8 +36,21 @@ export default function InternshipPage() {
   }, [jobs]);
 
   const filteredJobs = useMemo(() => {
-    return filterJobs(jobs, { keyword, company });
-  }, [jobs, keyword, company]);
+    const filtered = filterJobs(jobs, { keyword, company });
+    const toTime = (s?: string) => (s ? new Date(s).getTime() : 0);
+    return [...filtered].sort((a,b) => {
+      if (sort === "RECENT"){
+        return toTime(b.postedAt || b.ingestedAt) - toTime(a.postedAt || a.ingestedAt);
+      }
+      if (sort === "COMPANY"){
+        return a.company.localeCompare(b.company) || a.title.localeCompare(b.title);
+      }
+      if (sort === "TITLE"){
+        return a.title.localeCompare(b.title) || a.company.localeCompare(b.company);
+      }
+    })
+    
+  }, [jobs, keyword, company,sort]);
 
   return (
     <div className="internshipPage">
@@ -68,8 +82,12 @@ export default function InternshipPage() {
             <option key={c} value={c}>{c}</option>
           ))}
         </select>
-
-        <select
+        <select className="select" value={sort} onChange={(e) => setSort(e.target.value as any)}>
+          <option value="RECENT">Sort: Recent</option>
+          <option value="COMPANY">Sort: Company</option>
+          <option value="TITLE">Sort: Title</option>
+        </select>
+        {/* <select
           className="select"
           value={"RECENT"}
           onChange={() => {}}
@@ -77,7 +95,7 @@ export default function InternshipPage() {
           title="Sorting coming next"
         >
           <option value="RECENT">Sort: Recent</option>
-        </select>
+        </select> */}
       </div>
 
       {filteredJobs.length === 0 ? (
