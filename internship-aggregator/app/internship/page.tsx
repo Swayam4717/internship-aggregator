@@ -108,18 +108,19 @@ export default function InternshipPage() {
 
   const [keyword, setKeyword] = useState("");
   const [company, setCompany] = useState("ALL");
+  const [jobs, setJobs] = useState<JobPost[]>(MOCK_JOBS);
 
   const companies = useMemo(() => {
     const unique = Array.from(
-      new Set(MOCK_JOBS.map((j) => j.company))
+      new Set(jobs.map((j) => j.company))
     ).sort((a, b) => a.localeCompare(b));
 
     return ["ALL", ...unique];
-  }, []);
+  }, [jobs]);
 
   const filteredJobs = useMemo(() => {
-    return filterJobs(MOCK_JOBS, keyword, company);
-  }, [keyword, company]);
+    return filterJobs(jobs, { keyword, company });
+  }, [jobs, keyword, company]);
 
   return (
     <div>
@@ -158,7 +159,7 @@ export default function InternshipPage() {
         </select>
 
         <div>
-          Showing {filteredJobs.length} of {MOCK_JOBS.length}
+          Showing {filteredJobs.length} of {jobs.length}
         </div>
       </div>
 

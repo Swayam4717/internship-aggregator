@@ -1,10 +1,10 @@
 import type { JobPost } from "@/types/job";
-type jobFilters = {
+type JobFilters = {
         keyword?: string
         company?:string
 
     }
-export function filterJobs(jobs: JobPost[], filters: jobFilters): JobPost[] {
+export function filterJobs(jobs: JobPost[], filters: JobFilters): JobPost[] {
     const keyword = (filters.keyword ?? "").trim().toLowerCase();
     const company = filters.company ?? "ALL";
 
