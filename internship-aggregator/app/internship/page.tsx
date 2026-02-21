@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import type { JobPost } from "@/types/job";
 import { filterJobs } from "@/services/JobFilter";
-
+import "./internship.css";
 
 
 export default function InternshipPage() {
@@ -39,58 +39,95 @@ export default function InternshipPage() {
   }, [jobs, keyword, company]);
 
   return (
-    <div>
-      {/* Filters FIRST */}
-      <div style={{ display: "flex", gap: 12, marginBottom: 16 }}>
-        <input
-          value={keyword}
-          onChange={(e) => setKeyword(e.target.value)}
-          placeholder="Search..."
-          style={{
-            padding: 10,
-            border: "1px solid #ccc",
-            borderRadius: 8,
-            color: "black",
-            backgroundColor: "white"
-
-          }}
-        />
-
-        <select
-          value={company}
-          onChange={(e) => setCompany(e.target.value)}
-          style={{
-            padding: 10,
-            border: "1px solid #ccc",
-            borderRadius: 8,
-            color: "black",
-            backgroundColor: "white"
-            }}
-        >
-          {companies.map((c) => (
-            <option key={c} value={c}>
-              {c}
-            </option>
-          ))}
-        </select>
-
-        <div>
-          Showing {filteredJobs.length} of {jobs.length}
+    <div className="internshipPage">
+    <div className="container">
+      <div className="header">
+        <div className="titleWrap">
+          <h1>Internship Aggregator</h1>
+          <p>Search internships across company boards (Greenhouse now, more sources next).</p>
+        </div>
+        <div className="statPill">
+          Showing <b>{filteredJobs.length}</b> of <b>{jobs.length}</b>
         </div>
       </div>
 
-      {/* Results */}
-      {filteredJobs.map((job) => (
-        <div key={job.id}>
-          <h2>{job.title}</h2>
-          <p>{job.company} - {job.location}</p>
-          <p>Source: {job.source}</p>
-          <a href={job.postUrl} target="_blank" rel="noreferrer">
-            View Job Posting
-          </a>
-          <hr />
+      <div className="filters">
+        <input
+          className="input"
+          value={keyword}
+          onChange={(e) => setKeyword(e.target.value)}
+          placeholder="Search title, company, location..."
+        />
+
+        <select
+          className="select"
+          value={company}
+          onChange={(e) => setCompany(e.target.value)}
+        >
+          {companies.map((c) => (
+            <option key={c} value={c}>{c}</option>
+          ))}
+        </select>
+
+        <select
+          className="select"
+          value={"RECENT"}
+          onChange={() => {}}
+          disabled
+          title="Sorting coming next"
+        >
+          <option value="RECENT">Sort: Recent</option>
+        </select>
+      </div>
+
+      {filteredJobs.length === 0 ? (
+        <div className="empty">No internships match your filters.</div>
+      ) : (
+        <div className="grid">
+          {filteredJobs.map((job) => {
+            const showRemote = job.remoteType !== "UNKNOWN";
+            const companyName =
+              job.company.length ? job.company[0].toUpperCase() + job.company.slice(1) : job.company;
+
+            return (
+              <div className="card" key={job.id}>
+                <div className="cardTop">
+                  <div>
+                    <h2 className="jobTitle">{job.title}</h2>
+                    <div className="meta">
+                      <span><b>{companyName}</b></span>
+                      <span className="dot">•</span>
+                      <span>{job.location}</span>
+                      {showRemote && (
+                        <>
+                          <span className="dot">•</span>
+                          <span>{job.remoteType}</span>
+                        </>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="badges">
+                    <span className="badge">{job.source}</span>
+                    {showRemote && <span className="badge badgeAccent">{job.remoteType}</span>}
+                  </div>
+                </div>
+
+                <div className="cardBottom">
+                  <div className="small">
+                    {job.postedAt ? `Updated: ${new Date(job.postedAt).toLocaleDateString()}` : "Updated: —"}
+                  </div>
+
+                  <a className="button" href={job.postUrl} target="_blank" rel="noreferrer">
+                    View posting <span aria-hidden>→</span>
+                  </a>
+                </div>
+              </div>
+            );
+          })}
         </div>
-      ))}
+      )}
     </div>
-  );
+  </div>
+);
 }
