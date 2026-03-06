@@ -1,36 +1,55 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Internship Aggregator
 
-## Getting Started
+A full-stack internship aggregation platform that fetches and consolidates internship listings from public company job boards.
 
-First, run the development server:
+## Features
+
+- Aggregates jobs from multiple sources:
+  - Greenhouse
+  - Lever
+- Backend API aggregation layer with Next.js route handlers
+- Deduplication using normalized hash keys
+- Keyword search with improved matching logic
+- Sorting and filtering by company
+- Responsive UI for browsing live internships
+
+## Tech Stack
+
+- Next.js
+- TypeScript
+- Route Handlers / REST-style API endpoints
+- External job board APIs
+- Custom filtering and scoring logic
+
+## Architecture
+
+Frontend (`/internship`) calls:
+
+- `GET /api/jobs`
+
+Which aggregates data from:
+
+- Greenhouse connector
+- Lever connector
+
+## Running Locally
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000/internship
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Notes
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+This project currently uses live public job board data and lightweight caching.
+Future improvements could include:
 
-## Learn More
+database persistence
 
-To learn more about Next.js, take a look at the following resources:
+scheduled refresh jobs
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+additional ATS connectors
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+advanced search ranking
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

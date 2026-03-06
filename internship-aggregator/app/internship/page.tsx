@@ -87,15 +87,7 @@ export default function InternshipPage() {
           <option value="COMPANY">Sort: Company</option>
           <option value="TITLE">Sort: Title</option>
         </select>
-        {/* <select
-          className="select"
-          value={"RECENT"}
-          onChange={() => {}}
-          disabled
-          title="Sorting coming next"
-        >
-          <option value="RECENT">Sort: Recent</option>
-        </select> */}
+       
       </div>
 
       {filteredJobs.length === 0 ? (

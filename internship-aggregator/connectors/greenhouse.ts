@@ -17,7 +17,7 @@ function inferRemoteType(locationName: string): JobPost["remoteType"] {
 }
 export async function fetchGreenhouseJobs(boardUrl:string): Promise<JobPost[]>{
     const slug = extractBoardSlug(boardUrl);
-    const response = await fetch(`https://boards-api.greenhouse.io/v1/boards/${slug}/jobs`);
+    const response = await fetch(`https://boards-api.greenhouse.io/v1/boards/${slug}/jobs`, {next: {revalidate:300}});
     if(!response.ok){
         throw new Error(`Failed to fetch jobs from Greenhouse for board ${slug}`);
     }
